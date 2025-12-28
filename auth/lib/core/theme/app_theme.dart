@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Your Brand Colors
-  static const Color primaryGold = Color.fromARGB(255, 252, 145, 23);
+  static const Color primaryGold = Color(0xFFE66C2C);
   static const Color surfaceWhite = Color(0xFFF8F8F8);
   static const Color errorRed = Color(0xFFBA1A1A);
 

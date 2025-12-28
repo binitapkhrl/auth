@@ -12,13 +12,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
- 
 
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^3.1.0
   beamer: ^1.7.0
   sign_in_button: ^3.0.0
-  
+  responsive_framework: ^1.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -26,10 +26,14 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
-  assets:
-    - assets/icons/google.png
   uses-material-design: true
 
+  # Correctly indented assets (you can keep this if using custom image)
+  # But since you're using sign_in_button, this is optional and can be removed
+  # assets:
+  #   - assets/icons/
+
+  # Uncomment and adjust if you have custom fonts
   # fonts:
   #   - family: Libadora
   #     fonts:
