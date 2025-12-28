@@ -37,6 +37,7 @@ class AppGoogleButton extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                
                 // Google Icon (you can use SVG or PNG asset)
                 Image.asset(
                   'assets/images/google_logo.png', // Add this asset to your pubspec.yaml
