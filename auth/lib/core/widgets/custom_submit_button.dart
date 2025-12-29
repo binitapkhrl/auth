@@ -15,11 +15,16 @@ class AppPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primaryGold = theme.colorScheme.primary;
 
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
-      style: theme.elevatedButtonTheme.style?.copyWith(
-        minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 56)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryGold,
+        minimumSize: const Size(double.infinity, 56),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
       child: isLoading
           ? SizedBox(
@@ -27,7 +32,7 @@ class AppPrimaryButton extends StatelessWidget {
               width: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             )
           : Text(
@@ -36,6 +41,7 @@ class AppPrimaryButton extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Libadora',
+                color: Colors.white,
               ),
             ),
     );

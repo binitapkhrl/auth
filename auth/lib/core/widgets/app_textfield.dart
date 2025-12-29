@@ -57,6 +57,7 @@ class _AppTextFieldState extends State<AppTextField> {
             widget.label!,
             style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w500,
+              color: Colors.grey,
             ),
           ),
           const SizedBox(height: 6),
@@ -74,13 +75,23 @@ class _AppTextFieldState extends State<AppTextField> {
           style: theme.textTheme.bodyLarge,
           decoration: InputDecoration(
             hintText: widget.hintText,
-            // Remove all manual border definitions
-            // The theme's inputDecorationTheme will handle borders automatically
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+            ),
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: theme.iconTheme.color,
+                      color: Colors.grey,
                     ),
                     onPressed: _togglePasswordVisibility,
                     splashRadius: 20,
@@ -90,7 +101,7 @@ class _AppTextFieldState extends State<AppTextField> {
               horizontal: 16,
               vertical: 18,
             ),
-            filled: true, // Important: match your theme's filled: true
+            filled: true,
             fillColor: Colors.white,
           ),
         ),
