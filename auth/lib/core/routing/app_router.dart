@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:auth/features/presentation/pages/login_page.dart';
 import 'package:auth/features/presentation/pages/signup_page.dart';
+import 'package:auth/features/presentation/pages/otp_page.dart';
 import 'routes.dart';
 
 class AppRouter {
@@ -9,7 +10,7 @@ class AppRouter {
       routes: {
         AppRoutes.login: (context, state, data) => const LoginPage(),
         AppRoutes.signup: (context, state, data) => const SignUpPage(),
-        // AppRoutes.home: (context, state, data) => const HomePage(),
+        AppRoutes.otp: (context, state, data) => const OtpVerificationPage(),
       },
     ).call,
   );

@@ -147,7 +147,9 @@ SizedBox(height: screenHeight * 0.15),
                                   ],
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                     Beamer.of(context).beamToNamed('/otp');
+                                  },
                                   child: Text(
                                     'Forgot Password?',
                                     style: TextStyle(
