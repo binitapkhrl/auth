@@ -86,9 +86,6 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryGold = theme.colorScheme.primary;
-    // final screenHeight = MediaQuery.of(context).size.height;
-
-    // final maskedEmail = widget.email.replaceRange(3, widget.email.indexOf('@'), '*****');
 
     return Scaffold(
       backgroundColor: primaryGold,
@@ -110,14 +107,6 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         children: const [
                           Icon(Icons.arrow_back, size: 24, color: Colors.white),
                           SizedBox(width: 8),
-                          // Text(
-                          //   'Back',
-                          //   style: TextStyle(
-                          //     color: Colors.white,
-                          //     fontSize: 16,
-                          //     fontWeight: FontWeight.w500,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
