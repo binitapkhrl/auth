@@ -57,7 +57,7 @@ class _AppTextFieldState extends State<AppTextField> {
             widget.label!,
             style: theme.textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Colors.grey,
+              color: Colors.grey.shade700,
             ),
           ),
           const SizedBox(height: 6),
@@ -75,6 +75,7 @@ class _AppTextFieldState extends State<AppTextField> {
           style: theme.textTheme.bodyLarge,
           decoration: InputDecoration(
             hintText: widget.hintText,
+            hintStyle: TextStyle(color: Colors.grey.shade500),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
@@ -85,7 +86,7 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
             ),
             suffixIcon: widget.isPassword
                 ? IconButton(
