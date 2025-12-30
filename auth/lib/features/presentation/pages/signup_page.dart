@@ -7,6 +7,7 @@ import 'package:beamer/beamer.dart';
 import 'package:auth/core/utils/login_utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:auth/features/auth/providers/signup_provider.dart';
 
 class SignUpPage extends HookConsumerWidget {
   const SignUpPage({super.key});
@@ -15,6 +16,7 @@ Widget build(BuildContext context, WidgetRef ref) {
   final formKey = useMemoized(() => GlobalKey<FormState>());
   final emailController = useTextEditingController();
   final passwordController = useTextEditingController();
+  final signupState = ref.watch(signupProvider);
 
   final theme = Theme.of(context);
   final primaryGold = theme.colorScheme.primary;
@@ -127,19 +129,34 @@ Widget build(BuildContext context, WidgetRef ref) {
                           ),
                           const SizedBox(height: 32),
                           AppPrimaryButton(
-                            text: 'Sign Up',
-                            onPressed: () {
-                              if (!(formKey.currentState?.validate() ?? false)) {
-                                return;
-                              }
-                              // TODO: Call your signup logic here (we'll do this in next step)
-                            },
+                            text: signupState.isLoading ? 'Signing up...' : 'Sign Up',
+                            onPressed: signupState.isLoading
+                                ? null
+                                : () {
+                                    if (!(formKey.currentState?.validate() ?? false)) {
+                                      return;
+                                    }
+
+                                    ref.read(signupProvider.notifier).signUp(
+                                          email: emailController.text.trim(),
+                                          password: passwordController.text.trim(),
+                                          onSuccess: () {
+                                            Beamer.of(context).beamToNamed('/otp');
+                                          },
+                                          onError: (error) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text(error),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                  },
                           ),
                           const SizedBox(height: 16),
                           AppGoogleButton(
-                            onPressed: () {
-                              // TODO: Google sign up
-                            },
+                            onPressed: signupState.isLoading ? null : () {},
                           ),
                           const SizedBox(height: 40),
                           Row(

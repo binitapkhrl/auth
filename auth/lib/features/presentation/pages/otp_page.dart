@@ -1,91 +1,89 @@
-import 'package:flutter/material.dart';
-import 'package:auth/core/widgets/custom_submit_button.dart'; // Your reusable button
-import 'package:auth/core/widgets/auth_container.dart';
-import 'package:pinput/pinput.dart'; // Recommended package for OTP input
 import 'dart:async';
+import 'package:auth/core/widgets/auth_container.dart';
+import 'package:auth/core/widgets/custom_submit_button.dart'; // Your reusable button
+import 'package:auth/features/auth/providers/otp_provider.dart';
 import 'package:beamer/beamer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:pinput/pinput.dart'; // Recommended package for OTP input
 
-class OtpVerificationPage extends StatefulWidget {
-  // final String email; // Passed from previous screen (masked for privacy)
-
-  const OtpVerificationPage({
-    super.key,
-    // required this.email,
-  });
-
-  @override
-  State<OtpVerificationPage> createState() => _OtpVerificationPageState();
-}
-
-class _OtpVerificationPageState extends State<OtpVerificationPage> {
-  final _otpController = TextEditingController();
-  Timer? _timer;
-  int _remainingSeconds = 60;
-  bool _canResend = false;
-  String? _errorMessage;
+class OtpVerificationPage extends HookConsumerWidget {
+  const OtpVerificationPage({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _canResend = false;
-    _remainingSeconds = 60;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
-        setState(() => _remainingSeconds--);
-      } else {
-        setState(() => _canResend = true);
-        timer.cancel();
-      }
-    });
-  }
-
-  void _resendOtp() {
-    if (!_canResend) return;
-
-    // TODO: Call your resend OTP API here
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('OTP resent successfully')));
-
-    setState(() {
-      _errorMessage = null;
-      _otpController.clear();
-    });
-    _startTimer();
-  }
-
-  void _verifyOtp() {
-    final otp = _otpController.text.trim();
-
-    if (otp.length != 6) {
-      setState(() => _errorMessage = 'Please enter a valid 6-digit OTP');
-      return;
-    }
-
-    // TODO: Call your verify OTP API here
-    // On success: navigate to home or next screen
-    // On failure: setState(() => _errorMessage = 'Invalid OTP. Please try again.');
-
-    // Example failure simulation:
-    setState(() => _errorMessage = 'Invalid OTP. Please try again.');
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _otpController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final primaryGold = theme.colorScheme.primary;
+
+    final otpState = ref.watch(otpProvider);
+    final otpController = useTextEditingController();
+    final remainingSeconds = useState(60);
+    final canResend = useState(false);
+    final errorMessage = useState<String?>(null);
+    final timerRef = useRef<Timer?>(null);
+
+    void startTimer() {
+      canResend.value = false;
+      remainingSeconds.value = 60;
+      timerRef.value?.cancel();
+      timerRef.value = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (remainingSeconds.value > 0) {
+          remainingSeconds.value = remainingSeconds.value - 1;
+        } else {
+          canResend.value = true;
+          timer.cancel();
+        }
+      });
+    }
+
+    useEffect(() {
+      startTimer();
+      return () {
+        timerRef.value?.cancel();
+      };
+    }, const []);
+
+    void resendOtp() {
+      if (!canResend.value || otpState.isLoading) return;
+
+      ref.read(otpProvider.notifier).resendOtp(
+            onSuccess: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('OTP resent successfully')),
+              );
+              errorMessage.value = null;
+              otpController.clear();
+              startTimer();
+            },
+            onError: (msg) {
+              errorMessage.value = msg;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(msg), backgroundColor: Colors.red),
+              );
+            },
+          );
+    }
+
+    void verifyOtp() {
+      final otp = otpController.text.trim();
+
+      if (otp.length != 6) {
+        errorMessage.value = 'Please enter a valid 6-digit OTP';
+        return;
+      }
+
+      ref.read(otpProvider.notifier).verifyOtp(
+            code: otp,
+            onSuccess: () {
+              errorMessage.value = null;
+              Beamer.of(context).beamToReplacementNamed('/home');
+            },
+            onError: (msg) {
+              errorMessage.value = msg;
+            },
+          );
+    }
 
     return Scaffold(
       backgroundColor: primaryGold,
@@ -161,7 +159,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Pinput(
-                            controller: _otpController,
+                            controller: otpController,
                             length: 6,
                             defaultPinTheme: PinTheme(
                               width: 56,
@@ -203,7 +201,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onCompleted: (pin) => _verifyOtp(),
+                            onCompleted: (pin) => verifyOtp(),
                           ),
 
                           const SizedBox(height: 24),
@@ -212,9 +210,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // Left: timer when not allowed to resend
-                              if (!_canResend)
+                              if (!canResend.value)
                                 Text(
-                                  'Remaining time $_remainingSeconds s',
+                                  'Remaining time ${remainingSeconds.value} s',
                                   style: TextStyle(
                                     color: Colors.grey.shade600,
                                     fontSize: 14,
@@ -225,15 +223,15 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
                               // Right: resend action
                               GestureDetector(
-                                onTap: _canResend ? _resendOtp : null,
+                                onTap: canResend.value ? resendOtp : null,
                                 child: Text(
                                   'Resend OTP',
                                   style: TextStyle(
-                                    color: _canResend
+                                    color: canResend.value
                                         ? primaryGold
                                         : Colors.grey.shade500,
                                     fontWeight: FontWeight.w600,
-                                    decoration: _canResend
+                                    decoration: canResend.value
                                         ? TextDecoration.underline
                                         : null,
                                   ),
@@ -241,14 +239,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 32),
+                            const SizedBox(height: 32),
 
                           // Error message
-                          if (_errorMessage != null)
+                          if (errorMessage.value != null)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: Text(
-                                _errorMessage!,
+                                errorMessage.value!,
                                 style: const TextStyle(
                                   color: Colors.red,
                                   fontSize: 14,
@@ -258,8 +256,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                             ),
 
                           AppPrimaryButton(
-                            text: 'Verify',
-                            onPressed: _verifyOtp,
+                            text: otpState.isLoading ? 'Verifying...' : 'Verify',
+                            onPressed: otpState.isLoading ? null : verifyOtp,
                           ),
                         ],
                       ),
