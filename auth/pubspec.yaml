@@ -31,8 +31,9 @@ flutter:
 
   # Correctly indented assets (you can keep this if using custom image)
   # But since you're using sign_in_button, this is optional and can be removed
-  # assets:
-  #   - assets/icons/
+  assets:
+    - assets/icons/
+    - assets/logo/
 
   # Uncomment and adjust if you have custom fonts
   # fonts:

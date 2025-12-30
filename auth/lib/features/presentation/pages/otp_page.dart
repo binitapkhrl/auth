@@ -207,15 +207,23 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           ),
 
                           const SizedBox(height: 24),
-
-                          // Countdown + Resend
+                          // Countdown + Resend aligned spaceBetween
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Didn\'t receive code? ',
-                                style: TextStyle(color: Colors.grey.shade700),
-                              ),
+                              // Left: timer when not allowed to resend
+                              if (!_canResend)
+                                Text(
+                                  'Remaining time $_remainingSeconds s',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              else
+                                const SizedBox.shrink(),
+
+                              // Right: resend action
                               GestureDetector(
                                 onTap: _canResend ? _resendOtp : null,
                                 child: Text(
@@ -233,19 +241,6 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                               ),
                             ],
                           ),
-
-                          if (!_canResend) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              'Resend available in $_remainingSeconds seconds',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-
                           const SizedBox(height: 32),
 
                           // Error message
