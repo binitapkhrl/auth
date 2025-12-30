@@ -6,7 +6,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:pinput/pinput.dart'; // Recommended package for OTP input
+import 'package:pinput/pinput.dart';
+import 'package:auth/core/widgets/auth_header.dart'; // Recommended package for OTP input
 
 class OtpVerificationPage extends HookConsumerWidget {
   const OtpVerificationPage({super.key});
@@ -103,54 +104,16 @@ class OtpVerificationPage extends HookConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header with back button styled like SignUpPage
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Beamer.of(context).beamBack(),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.arrow_back, size: 24, color: Colors.white),
-                          SizedBox(width: 8),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Verify OTP',
-                          style: theme.textTheme.displayLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'We sent a 6-digit code to ****06@gmail.com', // or masked email
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            // ================= HEADER =================
+            AuthHeader(
+              title: 'Verify OTP',
+              subtitle: 'We sent a 6-digit code to ****06@gmail.com',
+              onBack: () => Beamer.of(context).beamBack(),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            // White card with OTP form
+            // ================= WHITE CARD =================
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -158,21 +121,27 @@ class OtpVerificationPage extends HookConsumerWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                    ),
-                    child: AuthContainer(
-                      title: 'Enter Verification Code',
-                      subtitle: 'Check your email for the OTP',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Pinput(
-                            controller: otpController,
-                            length: 6,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+                    final needsScroll = keyboardHeight > 0;
+
+                    final content = Padding(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 32,
+                        bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
+                      ),
+                      child: AuthContainer(
+                        title: 'Enter Verification Code',
+                        subtitle: 'Check your email for the OTP',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Pinput(
+                              controller: otpController,
+                              length: 6,
                             defaultPinTheme: PinTheme(
                               width: 56,
                               height: 56,
@@ -251,30 +220,35 @@ class OtpVerificationPage extends HookConsumerWidget {
                               ),
                             ],
                           ),
-                            const SizedBox(height: 32),
+                          const SizedBox(height: 32),
 
-                          // Error message
-                          if (errorMessage.value != null)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Text(
-                                errorMessage.value!,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
+                        // Error message
+                        if (errorMessage.value != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              errorMessage.value!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
                               ),
+                              textAlign: TextAlign.center,
                             ),
-
-                          AppPrimaryButton(
-                            text: otpState.isLoading ? 'Verifying...' : 'Verify',
-                            onPressed: otpState.isLoading ? null : verifyOtp,
                           ),
-                        ],
+
+                        AppPrimaryButton(
+                          text: otpState.isLoading ? 'Verifying...' : 'Verify',
+                          onPressed: otpState.isLoading ? null : verifyOtp,
+                        ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+
+                        return needsScroll 
+                        ? SingleChildScrollView(child: content)
+                        : content;
+                  },
                 ),
               ),
             ),

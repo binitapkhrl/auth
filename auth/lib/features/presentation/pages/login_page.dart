@@ -3,6 +3,7 @@ import 'package:auth/core/widgets/app_textfield.dart';
 import 'package:auth/core/widgets/custom_submit_button.dart';
 import 'package:auth/core/widgets/custom_google_button.dart';
 import 'package:auth/core/widgets/auth_container.dart';
+import 'package:auth/core/widgets/auth_header.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:beamer/beamer.dart';
@@ -16,9 +17,8 @@ class LoginPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final primaryGold = theme.colorScheme.primary;
-    final screenHeight = MediaQuery.of(context).size.height;
     final loginState = ref.watch(loginProvider);
-    
+
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
@@ -27,191 +27,185 @@ class LoginPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: primaryGold,
       resizeToAvoidBottomInset: true,
-      body: Stack(
-        children: [
-          /// Header
-          SizedBox(
-            height: screenHeight * 0.4),
-          SafeArea(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
-              child: Column(
-                children: [
-                  Text(
-                    'Login Saauzi',
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Please sign in to continue to your account',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ================= HEADER =================
+            AuthHeader(
+              title: 'Login Saauzi',
+              subtitle: 'Please sign in to continue to your account',
             ),
-          ),
-SizedBox(height: screenHeight * 0.15),
-          /// Scrollable Card
-          Positioned.fill(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: screenHeight * 0.28),
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(32)),
-                    ),
-                    child:AuthContainer(
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            AppTextField(
-                              label: 'Email',
-                              hintText: 'Enter your email',
-                              keyboardType: TextInputType.emailAddress,
-                              controller: emailController,
-                              validator: LoginUtils.validateEmail,
-                            ),
-                            const SizedBox(height: 20),
-                            AppTextField(
-                              label: 'Password',
-                              hintText: 'Enter your password',
-                              isPassword: true,
-                              controller: passwordController,
-                              validator: LoginUtils.validatePassword,
-                            ),
-                            const SizedBox(height: 12),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: rememberMe.value,
-                                      onChanged: (value) {
-                                        rememberMe.value = value ?? false;
-                                      },
-                                    ),
-                                    Text(
-                                      'Remember me',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                     Beamer.of(context).beamToNamed('/otp');
-                                  },
-                                  child: Text(
-                                    'Forgot Password?',
+            const SizedBox(height: 24),
+
+            // ================= WHITE CARD =================
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(32),
+                  ),
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+                    final needsScroll = keyboardHeight > 0;
+
+                    final content = Padding(
+                      padding: EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 32,
+                        bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
+                      ),
+                      child: AuthContainer(
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              AppTextField(
+                                label: 'Email',
+                                hintText: 'Enter your email',
+                                keyboardType: TextInputType.emailAddress,
+                                controller: emailController,
+                                validator: LoginUtils.validateEmail,
+                              ),
+                              const SizedBox(height: 20),
+                              AppTextField(
+                                label: 'Password',
+                                hintText: 'Enter your password',
+                                isPassword: true,
+                                controller: passwordController,
+                                validator: LoginUtils.validatePassword,
+                              ),
+                          const SizedBox(height: 12),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: rememberMe.value,
+                                    onChanged: (value) {
+                                      rememberMe.value = value ?? false;
+                                    },
+                                  ),
+                                  Text(
+                                    'Remember me',
                                     style: TextStyle(
-                                      color: primaryGold,
+                                      color: Colors.grey.shade700,
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            /// LOGIN BUTTON
-                            AppPrimaryButton(
-                              text: loginState.isLoading
-                                  ? 'Logging in...'
-                                  : 'Log In',
-                              onPressed: loginState.isLoading
-                                  ? null
-                                  : () {
-                                      final isValid =
-                                          formKey.currentState?.validate() ??
-                                              false;
-                                      if (!isValid) return;
-
-                                      ref
-                                          .read(loginProvider.notifier)
-                                          .login(
-                                            email: emailController.text.trim(),
-                                            password: passwordController.text.trim(),
-                                            onSuccess: () {
-                                              Beamer.of(context).beamToReplacementNamed('/home');
-                                            },
-                                            onError: (error) {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(error),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              );
-                                            },
-                                          );
-                                    },
-                            ),
-
-                            const SizedBox(height: 16),
-
-                            /// GOOGLE BUTTON
-                            AppGoogleButton(
-                              onPressed:
-                                  loginState.isLoading ? null : () {},
-                            ),
-
-                            const SizedBox(height: 40),
-
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Don't have an account? ",
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Beamer.of(context).beamToNamed('/otp');
+                                },
+                                child: Text(
+                                  'Forgot Password?',
                                   style: TextStyle(
-                                    color: Colors.grey.shade700,
+                                    color: primaryGold,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 32),
+
+                          // ================= LOGIN BUTTON =================
+                          AppPrimaryButton(
+                            text: loginState.isLoading
+                                ? 'Logging in...'
+                                : 'Log In',
+                            onPressed: loginState.isLoading
+                                ? null
+                                : () {
+                                    final isValid =
+                                        formKey.currentState?.validate() ??
+                                            false;
+                                    if (!isValid) return;
+
+                                    ref.read(loginProvider.notifier).login(
+                                          email:
+                                              emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                          onSuccess: () {
+                                            Beamer.of(context)
+                                                .beamToReplacementNamed(
+                                                    '/home');
+                                          },
+                                          onError: (error) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(error),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                  },
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // ================= GOOGLE BUTTON =================
+                          AppGoogleButton(
+                            onPressed:
+                                loginState.isLoading ? null : () {},
+                          ),
+
+                          const SizedBox(height: 40),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account? ",
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => Beamer.of(context)
+                                    .beamToNamed('/signup'),
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    color: primaryGold,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 15,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () =>
-                                      Beamer.of(context).beamToNamed('/signup'),
-                                  child: Text(
-                                    'Sign Up',
-                                    style: TextStyle(
-                                      color: primaryGold,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 100),
-                          ],
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 40),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    );
+
+                    return SingleChildScrollView(child: content);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
