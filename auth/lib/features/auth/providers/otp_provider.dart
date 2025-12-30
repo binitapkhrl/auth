@@ -8,44 +8,26 @@ class OtpNotifier extends AsyncNotifier<void> {
   late final AuthRepository _authRepository;
 
   @override
-  Future<void> build() async {
-    _authRepository = ref.read(authRepositoryProvider);
+  void build() {
+    _authRepository = ref.watch(authRepositoryProvider);
   }
 
-  Future<void> resendOtp({
-    Function()? onSuccess,
-    Function(String error)? onError,
-  }) async {
+  /// Handles resending the OTP code
+  Future<void> resendOtp() async {
     state = const AsyncLoading();
-    try {
+    state = await AsyncValue.guard(() async {
       await _authRepository.resendOtp();
-      state = const AsyncData(null);
-      onSuccess?.call();
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-      onError?.call(e.toString());
-    }
+    });
   }
 
-  Future<void> verifyOtp({
-    required String code,
-    Function()? onSuccess,
-    Function(String error)? onError,
-  }) async {
+  /// Verifies the entered OTP code
+  Future<void> verifyOtp({required String code}) async {
     state = const AsyncLoading();
-    try {
-      final ok = await _authRepository.verifyOtp(code);
-      if (ok) {
-        state = const AsyncData(null);
-        onSuccess?.call();
-      } else {
-        const msg = 'OTP verification failed';
-        state = const AsyncError(msg, StackTrace.empty);
-        onError?.call(msg);
+    state = await AsyncValue.guard(() async {
+      final isVerified = await _authRepository.verifyOtp(code);
+      if (!isVerified) {
+        throw 'OTP verification failed';
       }
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-      onError?.call(e.toString());
-    }
+    });
   }
 }

@@ -21,21 +21,10 @@ class LoginNotifier extends AsyncNotifier<void> {
     Function(String error)? onError,
   }) async {
     state = const AsyncLoading();
-
-    try {
-      final success = await _authRepository.signIn(email, password);
-
-      if (success) {
-        state = const AsyncData(null); // Success
-        onSuccess?.call();
-      } else {
-        final error = 'Login failed';
-        state = const AsyncError('Login failed', StackTrace.empty);
-        onError?.call(error);
-      }
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-      onError?.call(e.toString());
-    }
+    state = await AsyncValue.guard(() async {
+    final success = await _authRepository.signIn(email, password);
+    if (!success) throw Exception('Login failed');
+    // return null; // This becomes AsyncData(null)
+  });
   }
 }

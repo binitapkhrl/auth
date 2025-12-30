@@ -22,6 +22,7 @@ class OtpVerificationPage extends HookConsumerWidget {
     final canResend = useState(false);
     final errorMessage = useState<String?>(null);
     final timerRef = useRef<Timer?>(null);
+    final wasResending = useRef(false);
 
     void startTimer() {
       canResend.value = false;
@@ -44,25 +45,44 @@ class OtpVerificationPage extends HookConsumerWidget {
       };
     }, const []);
 
+    // Listen to OTP provider state changes
+    ref.listen<AsyncValue<void>>(otpProvider, (previous, next) {
+      if (previous is AsyncLoading && next is AsyncData) {
+        // Success
+        if (wasResending.value) {
+          // Resend OTP succeeded
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('OTP resent successfully')),
+          );
+          errorMessage.value = null;
+          otpController.clear();
+          startTimer();
+          wasResending.value = false;
+        } else {
+          // Verify OTP succeeded
+          errorMessage.value = null;
+          Beamer.of(context).beamToReplacementNamed('/home');
+        }
+      }
+
+      // Handle errors
+      if (next is AsyncError) {
+        final error = next.error.toString();
+        errorMessage.value = error;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+          ),
+        );
+        wasResending.value = false;
+      }
+    });
+
     void resendOtp() {
       if (!canResend.value || otpState.isLoading) return;
-
-      ref.read(otpProvider.notifier).resendOtp(
-            onSuccess: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('OTP resent successfully')),
-              );
-              errorMessage.value = null;
-              otpController.clear();
-              startTimer();
-            },
-            onError: (msg) {
-              errorMessage.value = msg;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(msg), backgroundColor: Colors.red),
-              );
-            },
-          );
+      wasResending.value = true;
+      ref.read(otpProvider.notifier).resendOtp();
     }
 
     void verifyOtp() {
@@ -73,16 +93,8 @@ class OtpVerificationPage extends HookConsumerWidget {
         return;
       }
 
-      ref.read(otpProvider.notifier).verifyOtp(
-            code: otp,
-            onSuccess: () {
-              errorMessage.value = null;
-              Beamer.of(context).beamToReplacementNamed('/home');
-            },
-            onError: (msg) {
-              errorMessage.value = msg;
-            },
-          );
+      wasResending.value = false;
+      ref.read(otpProvider.notifier).verifyOtp(code: otp);
     }
 
     return Scaffold(
