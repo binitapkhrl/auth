@@ -151,8 +151,7 @@ SizedBox(height: screenHeight * 0.15),
                                           .read(loginProvider.notifier)
                                           .login(
                                             email: emailController.text.trim(),
-                                            password: passwordController.text
-                                                .trim(),
+                                            password: passwordController.text.trim(),
                                             onSuccess: () {
                                               Beamer.of(context).beamToReplacementNamed('/home');
                                             },
