@@ -19,6 +19,24 @@ class SignUpPage extends HookConsumerWidget {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final signupState = ref.watch(signupProvider);
+    final errorMessage = useState<String?>(null);
+
+    void handleSignup() {
+      final isValid = formKey.currentState?.validate() ?? false;
+      if (!isValid) return;
+
+      errorMessage.value = null;
+      ref.read(signupProvider.notifier).signUp(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        onSuccess: () {
+          Beamer.of(context).beamToNamed('/otp');
+        },
+        onError: (error) {
+          errorMessage.value = error;
+        },
+      );
+    }
 
     final theme = Theme.of(context);
     final primaryGold = theme.colorScheme.primary;
@@ -66,21 +84,51 @@ class SignUpPage extends HookConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Error message display
+                              if (errorMessage.value != null)
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.red.shade200),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          errorMessage.value!,
+                                          style: TextStyle(
+                                            color: Colors.red.shade700,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (errorMessage.value != null) const SizedBox(height: 16),
+                              
                               AppTextField(
                                 label: 'Email',
                                 hintText: 'Enter your email',
                                 keyboardType: TextInputType.emailAddress,
                                 controller: emailController,
                                 validator: LoginUtils.validateEmail,
+                                textInputAction: TextInputAction.next,
                               ),
-                          const SizedBox(height: 20),
-                          AppTextField(
-                            label: 'Password',
-                            hintText: 'Enter your password',
-                            isPassword: true,
-                            controller: passwordController,
-                            validator: LoginUtils.validatePassword,
-                          ),
+                              const SizedBox(height: 20),
+                              AppTextField(
+                                label: 'Password',
+                                hintText: 'Enter your password',
+                                isPassword: true,
+                                controller: passwordController,
+                                validator: LoginUtils.validatePassword,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: handleSignup,
+                              ),
                           const SizedBox(height: 16),
 
                           RichText(
@@ -121,33 +169,7 @@ class SignUpPage extends HookConsumerWidget {
                             text: signupState.isLoading
                                 ? 'Signing up...'
                                 : 'Sign Up',
-                            onPressed: signupState.isLoading
-                                ? null
-                                : () {
-                                    if (!(formKey.currentState?.validate() ??
-                                        false)) return;
-
-                                    ref
-                                        .read(signupProvider.notifier)
-                                        .signUp(
-                                          email: emailController.text.trim(),
-                                          password:
-                                              passwordController.text.trim(),
-                                          onSuccess: () {
-                                            Beamer.of(context)
-                                                .beamToNamed('/otp');
-                                          },
-                                          onError: (error) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(error),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          },
-                                        );
-                                  },
+                            onPressed: signupState.isLoading ? null : handleSignup,
                           ),
 
                           const SizedBox(height: 16),

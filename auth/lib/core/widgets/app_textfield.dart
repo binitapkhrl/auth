@@ -10,6 +10,8 @@ class AppTextField extends StatefulWidget {
   final String? initialValue;
   final ValueChanged<String>? onChanged;
   final bool enabled;
+  final TextInputAction? textInputAction;
+  final VoidCallback? onFieldSubmitted;
 
   const AppTextField({
     super.key,
@@ -22,6 +24,8 @@ class AppTextField extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.enabled = true,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -72,6 +76,10 @@ class _AppTextFieldState extends State<AppTextField> {
           keyboardType: widget.keyboardType,
           obscureText: _obscureText,
           enabled: widget.enabled,
+          textInputAction: widget.textInputAction,
+          onFieldSubmitted: widget.onFieldSubmitted != null 
+              ? (_) => widget.onFieldSubmitted!() 
+              : null,
           style: theme.textTheme.bodyLarge,
           decoration: InputDecoration(
             hintText: widget.hintText,

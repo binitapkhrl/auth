@@ -23,6 +23,24 @@ class LoginPage extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final rememberMe = useState(false);
+    final errorMessage = useState<String?>(null);
+
+    void handleLogin() {
+      final isValid = formKey.currentState?.validate() ?? false;
+      if (!isValid) return;
+
+      errorMessage.value = null;
+      ref.read(loginProvider.notifier).login(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        onSuccess: () {
+          Beamer.of(context).beamToReplacementNamed('/home');
+        },
+        onError: (error) {
+          errorMessage.value = error;
+        },
+      );
+    }
 
     return Scaffold(
       backgroundColor: primaryGold,
@@ -51,7 +69,7 @@ class LoginPage extends HookConsumerWidget {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                    final needsScroll = keyboardHeight > 0;
+                    // final needsScroll = keyboardHeight > 0;
 
                     final content = Padding(
                       padding: EdgeInsets.only(
@@ -66,12 +84,40 @@ class LoginPage extends HookConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Error message display
+                              if (errorMessage.value != null)
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.red.shade200),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          errorMessage.value!,
+                                          style: TextStyle(
+                                            color: Colors.red.shade700,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (errorMessage.value != null) const SizedBox(height: 16),
+                              
                               AppTextField(
                                 label: 'Email',
                                 hintText: 'Enter your email',
                                 keyboardType: TextInputType.emailAddress,
                                 controller: emailController,
                                 validator: LoginUtils.validateEmail,
+                                textInputAction: TextInputAction.next,
                               ),
                               const SizedBox(height: 20),
                               AppTextField(
@@ -80,6 +126,8 @@ class LoginPage extends HookConsumerWidget {
                                 isPassword: true,
                                 controller: passwordController,
                                 validator: LoginUtils.validatePassword,
+                                textInputAction: TextInputAction.done,
+                                onFieldSubmitted: handleLogin,
                               ),
                           const SizedBox(height: 12),
 
@@ -126,35 +174,7 @@ class LoginPage extends HookConsumerWidget {
                             text: loginState.isLoading
                                 ? 'Logging in...'
                                 : 'Log In',
-                            onPressed: loginState.isLoading
-                                ? null
-                                : () {
-                                    final isValid =
-                                        formKey.currentState?.validate() ??
-                                            false;
-                                    if (!isValid) return;
-
-                                    ref.read(loginProvider.notifier).login(
-                                          email:
-                                              emailController.text.trim(),
-                                          password:
-                                              passwordController.text.trim(),
-                                          onSuccess: () {
-                                            Beamer.of(context)
-                                                .beamToReplacementNamed(
-                                                    '/home');
-                                          },
-                                          onError: (error) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(error),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          },
-                                        );
-                                  },
+                            onPressed: loginState.isLoading ? null : handleLogin,
                           ),
 
                           const SizedBox(height: 16),

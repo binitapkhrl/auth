@@ -32,7 +32,9 @@ class DashboardScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 16.0),
               child: Center(
                 child: Image.asset(
-                  'assets/logo/saauzi_logo.png', // PLACEHOLDER FOR YOUR PNG
+                  'assets/logo/saauzi_logo.png',
+                  height: 40, 
+                 fit: BoxFit.contain, // PLACEHOLDER FOR YOUR PNG
                   errorBuilder: (context, error, stackTrace) => 
                       const Text("LOGO", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                 ),
