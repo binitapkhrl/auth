@@ -5,15 +5,14 @@ import 'core/routing/app_router.dart';
 
 void main() {
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+ const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

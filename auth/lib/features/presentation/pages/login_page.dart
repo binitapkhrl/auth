@@ -3,73 +3,26 @@ import 'package:auth/core/widgets/app_textfield.dart';
 import 'package:auth/core/widgets/custom_submit_button.dart';
 import 'package:auth/core/widgets/custom_google_button.dart';
 import 'package:auth/core/widgets/auth_container.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:beamer/beamer.dart';
 import 'package:auth/core/utils/login_utils.dart';
 import 'package:auth/features/auth/providers/login_provider.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
+class LoginPage extends HookConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends ConsumerState<LoginPage> {
-  bool _rememberMe = false;
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final primaryGold = theme.colorScheme.primary;
     final screenHeight = MediaQuery.of(context).size.height;
     final loginState = ref.watch(loginProvider);
-
-    /// Handle success & error
-    // ref.listen(loginProvider, (previous, next) {
-    //   next.whenOrNull(
-    //     data: (_) {
-    //       Beamer.of(context).beamToReplacementNamed('/');
-    //     },
-    //     error: (error, _) {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           content: Text(error.toString()),
-    //           backgroundColor: Colors.red,
-    //         ),
-    //       );
-    //     },
-    //   );
-    // });
-    /// Handle success & error
-ref.listen<AsyncValue<void>>(loginProvider, (previous, next) {
-  // Only navigate if login was actually attempted
-  final loginAttempted = ref.read(loginProvider.notifier).loginAttempted;
-  
-  if (loginAttempted && previous is AsyncLoading && next is AsyncData) {
-    Beamer.of(context).beamToReplacementNamed('/home');
-  }
-
-  // Handle errors
-  if (next is AsyncError) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(next.error.toString()),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-});
+    
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
+    final rememberMe = useState(false);
 
     return Scaffold(
       backgroundColor: primaryGold,
@@ -122,7 +75,7 @@ SizedBox(height: screenHeight * 0.15),
                     ),
                     child:AuthContainer(
                       child: Form(
-                        key: _formKey,
+                        key: formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -130,7 +83,7 @@ SizedBox(height: screenHeight * 0.15),
                               label: 'Email',
                               hintText: 'Enter your email',
                               keyboardType: TextInputType.emailAddress,
-                              controller: _emailController,
+                              controller: emailController,
                               validator: LoginUtils.validateEmail,
                             ),
                             const SizedBox(height: 20),
@@ -138,7 +91,7 @@ SizedBox(height: screenHeight * 0.15),
                               label: 'Password',
                               hintText: 'Enter your password',
                               isPassword: true,
-                              controller: _passwordController,
+                              controller: passwordController,
                               validator: LoginUtils.validatePassword,
                             ),
                             const SizedBox(height: 12),
@@ -149,11 +102,9 @@ SizedBox(height: screenHeight * 0.15),
                                 Row(
                                   children: [
                                     Checkbox(
-                                      value: _rememberMe,
+                                      value: rememberMe.value,
                                       onChanged: (value) {
-                                        setState(() {
-                                          _rememberMe = value ?? false;
-                                        });
+                                        rememberMe.value = value ?? false;
                                       },
                                     ),
                                     Text(
@@ -192,16 +143,27 @@ SizedBox(height: screenHeight * 0.15),
                                   ? null
                                   : () {
                                       final isValid =
-                                          _formKey.currentState?.validate() ??
+                                          formKey.currentState?.validate() ??
                                               false;
                                       if (!isValid) return;
 
                                       ref
                                           .read(loginProvider.notifier)
                                           .login(
-                                            email: _emailController.text.trim(),
-                                            password: _passwordController.text
+                                            email: emailController.text.trim(),
+                                            password: passwordController.text
                                                 .trim(),
+                                            onSuccess: () {
+                                              Beamer.of(context).beamToReplacementNamed('/home');
+                                            },
+                                            onError: (error) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(error),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            },
                                           );
                                     },
                             ),

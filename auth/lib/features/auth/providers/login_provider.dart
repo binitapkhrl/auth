@@ -21,6 +21,8 @@ class LoginNotifier extends AsyncNotifier<void> {
   Future<void> login({
     required String email,
     required String password,
+    Function()? onSuccess,
+    Function(String error)? onError,
   }) async {
     _loginAttempted = true;
     state = const AsyncLoading();
@@ -30,9 +32,11 @@ class LoginNotifier extends AsyncNotifier<void> {
 
       if (isSuccess) {
         state = const AsyncData(null);
+        onSuccess?.call();
       }
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
+      onError?.call(e.toString());
     }
   }
 }
