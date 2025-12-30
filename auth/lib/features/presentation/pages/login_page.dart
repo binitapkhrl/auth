@@ -36,21 +36,40 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final loginState = ref.watch(loginProvider);
 
     /// Handle success & error
-    ref.listen(loginProvider, (previous, next) {
-      next.whenOrNull(
-        data: (_) {
-          Beamer.of(context).beamToReplacementNamed('/');
-        },
-        error: (error, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error.toString()),
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-      );
-    });
+    // ref.listen(loginProvider, (previous, next) {
+    //   next.whenOrNull(
+    //     data: (_) {
+    //       Beamer.of(context).beamToReplacementNamed('/');
+    //     },
+    //     error: (error, _) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           content: Text(error.toString()),
+    //           backgroundColor: Colors.red,
+    //         ),
+    //       );
+    //     },
+    //   );
+    // });
+    /// Handle success & error
+ref.listen<AsyncValue<void>>(loginProvider, (previous, next) {
+  // Only navigate if login was actually attempted
+  final loginAttempted = ref.read(loginProvider.notifier).loginAttempted;
+  
+  if (loginAttempted && previous is AsyncLoading && next is AsyncData) {
+    Beamer.of(context).beamToReplacementNamed('/home');
+  }
+
+  // Handle errors
+  if (next is AsyncError) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(next.error.toString()),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+});
 
     return Scaffold(
       backgroundColor: primaryGold,

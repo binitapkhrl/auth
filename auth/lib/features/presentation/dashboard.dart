@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:beamer/beamer.dart';
+// import 'package:beamer/beamer.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -32,7 +32,7 @@ class DashboardScreen extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 16.0),
               child: Center(
                 child: Image.asset(
-                  'assets/logo.png', // PLACEHOLDER FOR YOUR PNG
+                  'assets/logo/saauzi_logo.png', // PLACEHOLDER FOR YOUR PNG
                   errorBuilder: (context, error, stackTrace) => 
                       const Text("LOGO", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                 ),
