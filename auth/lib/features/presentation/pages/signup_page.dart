@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auth/core/widgets/app_textfield.dart';
-import 'package:auth/core/widgets/custom_submit_button.dart';
+import 'package:auth/core/widgets/app_primary_button.dart';
 import 'package:auth/core/widgets/custom_google_button.dart';
 import 'package:auth/core/widgets/auth_container.dart';
 import 'package:auth/core/widgets/auth_header.dart';

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:auth/core/widgets/auth_container.dart';
-import 'package:auth/core/widgets/custom_submit_button.dart'; // Your reusable button
+import 'package:auth/core/widgets/app_primary_button.dart'; // Your reusable button
 import 'package:auth/features/auth/providers/otp_provider.dart';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
