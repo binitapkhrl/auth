@@ -9,14 +9,14 @@ class CustomBottomNavBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(navIndexProvider);
-    final primary = Theme.of(context).colorScheme.primary;
+    // final primary = Theme.of(context).colorScheme.primary;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
+        // borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(25),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Your Brand Colors
-  static const Color primaryGold = Color(0xFFE66C2C);
+  static const Color primaryGold = Color(0xFFE67E22);
   static const Color surfaceWhite = Color(0xFFF8F8F8);
   static const Color errorRed = Color(0xFFBA1A1A);
 
@@ -11,7 +11,7 @@ class AppTheme {
     final borderRadius = BorderRadius.circular(12);
     final baseBorder = OutlineInputBorder(
       borderRadius: borderRadius,
-      borderSide: const BorderSide(color: Color.fromARGB(234, 252, 124, 5)),
+      borderSide: const BorderSide(color: Color(0xFFE67E22)),
     );
 
     return ThemeData(

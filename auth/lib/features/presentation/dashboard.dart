@@ -6,6 +6,8 @@ import 'package:auth/core/widgets/navigation_bar.dart';
 import 'package:auth/core/widgets/stat_box.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:auth/core/widgets/sales_line_chart.dart';
+import 'package:auth/core/widgets/revenue_chart.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -44,49 +46,29 @@ class DashboardScreen extends ConsumerWidget {
     const String storeLink = "https://saauzi.com/yourstore";
 
     return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomInset: true,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                offset: Offset(0, 2),
-                blurRadius: 1,
-              ),
-            ],
-          ),
-          child: AppBar(
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leadingWidth: 100,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Center(
-                child: Image.asset(
-                  'assets/logo/saauzi_logo.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Text(
-                    "LOGO",
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
-                  ),
-                ),
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.notifications_none_outlined, color: Colors.grey.shade700),
-                onPressed: () {},
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+  backgroundColor: Colors.white,
+  elevation: 1,
+  automaticallyImplyLeading: false,
+  systemOverlayStyle: SystemUiOverlayStyle.dark,
+
+  title: Image.asset(
+    'assets/logo/saauzi_logo.png',
+    height: 180,
+    fit: BoxFit.contain,
+  ),
+
+  actions: [
+    IconButton(
+      icon: Icon(
+        Icons.notifications_none_outlined,
+        color: Colors.grey.shade700,
       ),
+      onPressed: () {},
+    ),
+    const SizedBox(width: 8),
+  ],
+),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -186,7 +168,7 @@ class DashboardScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              "Start sellin in-person with our all new pos system",
+                              "Start selling in-person with our all new pos system",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 13,
@@ -291,68 +273,6 @@ class DashboardScreen extends ConsumerWidget {
 
               const SizedBox(height: 32),
 
-              // Performance Summary Section
-              // Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: [
-              //         const Text(
-              //           "Performance Summary",
-              //           style: TextStyle(
-              //             fontSize: 20,
-              //             fontWeight: FontWeight.bold,
-              //             color: Colors.black87,
-              //           ),
-              //         ),
-              //         TextButton.icon(
-              //           onPressed: () {
-              //             // TODO: Show filter dialog or bottom sheet
-              //           },
-              //           icon: const Icon(Icons.tune, size: 18),
-              //           label: const Text("Apply Filter"),
-              //           style: TextButton.styleFrom(
-              //             foregroundColor: theme.colorScheme.primary,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //     const SizedBox(height: 16),
-
-              //     // First Row: Total Orders, Total Products, Featured Products
-              //     GridView.count(
-              //       shrinkWrap: true,
-              //       physics: const NeverScrollableScrollPhysics(),
-              //       crossAxisCount: 3,
-              //       childAspectRatio: 1.1,
-              //       mainAxisSpacing: 16,
-              //       crossAxisSpacing: 12,
-              //       children: const [
-              //         StatBox(icon: Icons.shopping_bag_outlined, value: "1.3k", label: "Total Orders"),
-              //         StatBox(icon: Icons.inventory_2_outlined, value: "248", label: "Total Products"),
-              //         StatBox(icon: Icons.star_outline, value: "56", label: "Featured Products"),
-              //       ],
-              //     ),
-
-              //     const SizedBox(height: 24),
-
-              //     // Second Row: Total Orders, Shipped, Pending
-              //     GridView.count(
-              //       shrinkWrap: true,
-              //       physics: const NeverScrollableScrollPhysics(),
-              //       crossAxisCount: 3,
-              //       childAspectRatio: 1.1,
-              //       mainAxisSpacing: 12,
-              //       crossAxisSpacing: 12,
-              //       children: const [
-              //         StatBox(icon: Icons.check_circle_outline, value: "1.1k", label: "Total Orders"),
-              //         StatBox(icon: Icons.local_shipping_outlined, value: "892", label: "Shipped Orders"),
-              //         StatBox(icon: Icons.pending_outlined, value: "408", label: "Pending Orders"),
-              //       ],
-              //     ),
-              //   ],
-              // ),
               Column(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
@@ -383,13 +303,14 @@ class DashboardScreen extends ConsumerWidget {
 
     // First Row: Larger, prominent stats
     Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: const [
         Expanded(
           child: StatBox(
             icon: Icons.shopping_bag_outlined,
             value: "1.3k",
             label: "Total Orders",
-            height: 130,
+            height: 170,
           ),
         ),
         SizedBox(width: 16),
@@ -398,7 +319,7 @@ class DashboardScreen extends ConsumerWidget {
             icon: Icons.inventory_2_outlined,
             value: "248",
             label: "Total Products",
-            height: 130,
+            height: 170,
           ),
         ),
         SizedBox(width: 16),
@@ -407,14 +328,22 @@ class DashboardScreen extends ConsumerWidget {
             icon: Icons.star_outline,
             value: "56",
             label: "Featured Products",
-            height: 130,
+            height: 170,
           ),
         ),
       ],
     ),
 
     const SizedBox(height: 24),
-
+ const Text(
+          "Order Details",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 24),
     // Second Row: Smaller secondary stats
     Row(
       children: const [
@@ -423,7 +352,7 @@ class DashboardScreen extends ConsumerWidget {
             icon: Icons.check_circle_outline,
             value: "1.1k",
             label: "Total Orders",
-            height: 110,
+            height: 150,
           ),
         ),
         SizedBox(width: 16),
@@ -432,7 +361,7 @@ class DashboardScreen extends ConsumerWidget {
             icon: Icons.local_shipping_outlined,
             value: "892",
             label: "Shipped Orders",
-            height: 110,
+            height: 150,
           ),
         ),
         SizedBox(width: 16),
@@ -441,15 +370,58 @@ class DashboardScreen extends ConsumerWidget {
             icon: Icons.pending_outlined,
             value: "408",
             label: "Pending Orders",
-            height: 110,
+            height: 150,
           ),
         ),
       ],
     ),
+  
+ 
+const SizedBox(height: 40),
+// Sales Performance Chart
+Container(
+  padding: const EdgeInsets.all(20),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: Colors.grey.shade300),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withAlpha(25),
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "Weekly order count ",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+      const SizedBox(height: 16),
+      const SalesLineChart(),
+    ],
+  ),
+),
+// Inside your SingleChildScrollView > Column > children list
+
+const SizedBox(height: 32),
+
+// New Weekly Revenue Chart
+const WeeklyRevenueChart(),
+
+const SizedBox(height: 50), // Bottom space
+
   ],
 ),
 
-              const SizedBox(height: 100), // Bottom space for floating nav bar
+              const SizedBox(height: 50), // Bottom space for floating nav bar
             ],
           ),
         ),
@@ -457,8 +429,8 @@ class DashboardScreen extends ConsumerWidget {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
+          // left: 20,
+          // right: 20,
           top: 10,
         ),
         child: const CustomBottomNavBar(),
@@ -466,8 +438,6 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 }
-
-
 // Social Icon Widget (unchanged, improved with InkWell)
 class _SocialIcon extends StatelessWidget {
   final IconData icon;

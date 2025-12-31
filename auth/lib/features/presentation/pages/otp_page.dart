@@ -98,140 +98,274 @@ class OtpVerificationPage extends HookConsumerWidget {
       ref.read(otpProvider.notifier).verifyOtp(code: otp);
     }
 
-    return Scaffold(
-      backgroundColor: primaryGold,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ================= HEADER =================
-            AuthHeader(
-              title: 'Verify OTP',
-              subtitle: 'We sent a 6-digit code to ****06@gmail.com',
-              onBack: () => Beamer.of(context).beamBack(),
-            ),
+//     return Scaffold(
+//       backgroundColor: primaryGold,
+//       resizeToAvoidBottomInset: true,
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             // ================= HEADER =================
+//             AuthHeader(
+//               title: 'Verify OTP',
+//               subtitle: 'We sent a 6-digit code to your phone \nPlease enter it below.',
+//               onBack: () => Beamer.of(context).beamBack(),
+//             ),
 
-            const SizedBox(height: 24),
+//             const SizedBox(height: 24),
 
-            // ================= WHITE CARD =================
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                    final needsScroll = keyboardHeight > 0;
+//             // ================= WHITE CARD =================
+//             Expanded(
+//               child: Container(
+//                 width: double.infinity,
+//                 decoration: const BoxDecoration(
+//                   color: Colors.white,
+//                   borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+//                 ),
+//                 child: LayoutBuilder(
+//                   builder: (context, constraints) {
+//                     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+//                     final needsScroll = keyboardHeight > 0;
 
-                    final content = Padding(
-                      padding: EdgeInsets.only(
-                        left: 24,
-                        right: 24,
-                        top: 32,
-                        bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
-                      ),
-                      child: AuthContainer(
-                        title: 'Enter Verification Code',
-                        subtitle: 'Check your email for the OTP',
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+//                     final content = Padding(
+//                       padding: EdgeInsets.only(
+//                         // top: 25,
+//                         bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
+//                       ),
+//                       child: AuthContainer(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.stretch,
+//                           children: [
+//                             Align(
+//                               alignment: Alignment.centerLeft,
+//                               child: Text(
+//                                 'Code',
+//                                 style: TextStyle(
+//                                   fontSize: 18,
+//                                   fontWeight: FontWeight.bold,
+//                                   color: Colors.black87,
+//                                 ),
+//                               ),
+//                             ),
+//                             const SizedBox(height: 12),
+//                             Pinput(
+//                               controller: otpController,
+//                               length: 6,
+//                             defaultPinTheme: PinTheme(
+//                               width: 56,
+//                               height: 56,
+//                               textStyle: const TextStyle(
+//                                 fontSize: 24,
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                               decoration: BoxDecoration(
+//                                 border: Border.all(color: Colors.grey.shade400),
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             focusedPinTheme: PinTheme(
+//                               width: 56,
+//                               height: 56,
+//                               decoration: BoxDecoration(
+//                                 border: Border.all(
+//                                   color: primaryGold,
+//                                   width: 2,
+//                                 ),
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             submittedPinTheme: PinTheme(
+//                               width: 56,
+//                               height: 56,
+//                               decoration: BoxDecoration(
+//                                 color: primaryGold.withAlpha(25),
+//                                 border: Border.all(color: primaryGold),
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             errorPinTheme: PinTheme(
+//                               width: 56,
+//                               height: 56,
+//                               decoration: BoxDecoration(
+//                                 border: Border.all(color: Colors.red),
+//                                 borderRadius: BorderRadius.circular(12),
+//                               ),
+//                             ),
+//                             onCompleted: (pin) => verifyOtp(),
+//                           ),
+
+//                           const SizedBox(height: 24),
+//                           // Countdown + Resend aligned spaceBetween
+//                           Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                             children: [
+//                               // Left: timer when not allowed to resend
+//                               if (!canResend.value)
+//                                 Text(
+//                                   'Remaining time ${remainingSeconds.value} s',
+//                                   style: TextStyle(
+//                                     color: Colors.grey.shade600,
+//                                     fontSize: 14,
+//                                   ),
+//                                 )
+//                               else
+//                                 const SizedBox.shrink(),
+
+//                               // Right: resend action
+//                               GestureDetector(
+//                                 onTap: canResend.value ? resendOtp : null,
+//                                 child: Text(
+//                                   'Resend OTP',
+//                                   style: TextStyle(
+//                                     color: canResend.value
+//                                         ? primaryGold
+//                                         : Colors.grey.shade500,
+//                                     fontWeight: FontWeight.w600,
+//                                     decoration: canResend.value
+//                                         ? TextDecoration.underline
+//                                         : null,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                           const SizedBox(height: 32),
+
+//                         // Error message
+//                         if (errorMessage.value != null)
+//                           Padding(
+//                             padding: const EdgeInsets.only(bottom: 16),
+//                             child: Text(
+//                               errorMessage.value!,
+//                               style: const TextStyle(
+//                                 color: Colors.red,
+//                                 fontSize: 14,
+//                               ),
+//                               textAlign: TextAlign.center,
+//                             ),
+//                           ),
+
+//                         AppPrimaryButton(
+//                           text: otpState.isLoading ? 'Verifying...' : 'Verify',
+//                           onPressed: otpState.isLoading ? null : verifyOtp,
+//                         ),
+//                           ],
+//                         ),
+//                       ),
+//                     );
+
+//                         return needsScroll 
+//                         ? SingleChildScrollView(child: content)
+//                         : content;
+//                   },
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+return Scaffold(
+    backgroundColor: primaryGold,
+    // This is the key: Scaffold handles the "push" smoothly
+    resizeToAvoidBottomInset: true, 
+    body: SafeArea(
+      // We use a Column as the base to ensure the header is always visible
+      child: Column(
+        children: [
+          // ================= HEADER (Stays at the top) =================
+          AuthHeader(
+            title: 'Verify OTP',
+            subtitle: 'We sent a 6-digit code to your phone \nPlease enter it below.',
+            onBack: () => Beamer.of(context).beamBack(),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ================= WHITE CARD (Fills the rest) =================
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                child: SingleChildScrollView(
+                  // padding exactly as you had it
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+                  child: AuthContainer(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Code',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Pinput(
+                          controller: otpController,
+                          length: 6,
+                          defaultPinTheme: PinTheme(
+                            width: 56,
+                            height: 56,
+                            textStyle: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          focusedPinTheme: PinTheme(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: primaryGold, width: 2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onCompleted: (pin) => verifyOtp(),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Pinput(
-                              controller: otpController,
-                              length: 6,
-                            defaultPinTheme: PinTheme(
-                              width: 56,
-                              height: 56,
-                              textStyle: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade400),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            focusedPinTheme: PinTheme(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: primaryGold,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            submittedPinTheme: PinTheme(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                color: primaryGold.withAlpha(25),
-                                border: Border.all(color: primaryGold),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            errorPinTheme: PinTheme(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.red),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onCompleted: (pin) => verifyOtp(),
-                          ),
-
-                          const SizedBox(height: 24),
-                          // Countdown + Resend aligned spaceBetween
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Left: timer when not allowed to resend
-                              if (!canResend.value)
-                                Text(
-                                  'Remaining time ${remainingSeconds.value} s',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 14,
-                                  ),
-                                )
-                              else
-                                const SizedBox.shrink(),
-
-                              // Right: resend action
-                              GestureDetector(
-                                onTap: canResend.value ? resendOtp : null,
-                                child: Text(
-                                  'Resend OTP',
-                                  style: TextStyle(
-                                    color: canResend.value
-                                        ? primaryGold
-                                        : Colors.grey.shade500,
-                                    fontWeight: FontWeight.w600,
-                                    decoration: canResend.value
-                                        ? TextDecoration.underline
-                                        : null,
-                                  ),
+                            if (!canResend.value)
+                              Text(
+                                'Remaining time ${remainingSeconds.value} s',
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                              )
+                            else
+                              const SizedBox.shrink(),
+                            GestureDetector(
+                              onTap: canResend.value ? resendOtp : null,
+                              child: Text(
+                                'Resend OTP',
+                                style: TextStyle(
+                                  color: canResend.value ? primaryGold : Colors.grey.shade500,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: canResend.value ? TextDecoration.underline : null,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
+                            ),
+                          ],
+                        ),
+                        
+                        // We use a fixed high-spacing or dynamic height here
+                        // since Spacer() doesn't work inside SingleChildScrollView
+                        const SizedBox(height: 100), 
 
-                        // Error message
                         if (errorMessage.value != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: Text(
                               errorMessage.value!,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 14,
-                              ),
+                              style: const TextStyle(color: Colors.red, fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -240,21 +374,16 @@ class OtpVerificationPage extends HookConsumerWidget {
                           text: otpState.isLoading ? 'Verifying...' : 'Verify',
                           onPressed: otpState.isLoading ? null : verifyOtp,
                         ),
-                          ],
-                        ),
-                      ),
-                    );
-
-                        return needsScroll 
-                        ? SingleChildScrollView(child: content)
-                        : content;
-                  },
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -41,94 +41,82 @@ class LoginPage extends HookConsumerWidget {
         },
       );
     }
+  return Scaffold(
+    backgroundColor: primaryGold,
+    resizeToAvoidBottomInset: true, // Let Scaffold handle the keyboard lift
+    body: SafeArea(
+      child: Column(
+        children: [
+          // ================= HEADER (Stable at top) =================
+          AuthHeader(
+            title: 'Login Saauzi',
+            subtitle: 'Please sign in to continue to your account',
+          ),
 
-    return Scaffold(
-      backgroundColor: primaryGold,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ================= HEADER =================
-            AuthHeader(
-              title: 'Login Saauzi',
-              subtitle: 'Please sign in to continue to your account',
-            ),
+          const SizedBox(height: 24),
 
-            const SizedBox(height: 24),
-
-            // ================= WHITE CARD =================
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(32),
-                  ),
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                    // final needsScroll = keyboardHeight > 0;
-
-                    final content = Padding(
-                      padding: EdgeInsets.only(
-                        left: 24,
-                        right: 24,
-                        top: 32,
-                        bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
-                      ),
-                      child: AuthContainer(
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // Error message display
-                              if (errorMessage.value != null)
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.red.shade200),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          errorMessage.value!,
-                                          style: TextStyle(
-                                            color: Colors.red.shade700,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (errorMessage.value != null) const SizedBox(height: 16),
-                              
-                              AppTextField(
-                                label: 'Email',
-                                hintText: 'Enter your email',
-                                keyboardType: TextInputType.emailAddress,
-                                controller: emailController,
-                                validator: LoginUtils.validateEmail,
-                                textInputAction: TextInputAction.next,
+          // ================= WHITE CARD (Flexible) =================
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              // ClipRRect ensures the scrollable content doesn't overlap the rounded corners
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: AuthContainer(
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Error message display
+                          if (errorMessage.value != null) ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.red.shade200),
                               ),
-                              const SizedBox(height: 20),
-                              AppTextField(
-                                label: 'Password',
-                                hintText: 'Enter your password',
-                                isPassword: true,
-                                controller: passwordController,
-                                validator: LoginUtils.validatePassword,
-                                textInputAction: TextInputAction.done,
-                                onFieldSubmitted: handleLogin,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      errorMessage.value!,
+                                      style: TextStyle(color: Colors.red.shade700, fontSize: 14),
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          AppTextField(
+                            label: 'Email',
+                            hintText: 'example@gmail.com',
+                            keyboardType: TextInputType.emailAddress,
+                            controller: emailController,
+                            validator: LoginUtils.validateEmail,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 20),
+                          AppTextField(
+                            label: 'Password',
+                            hintText: 'Enter your password',
+                            isPassword: true,
+                            controller: passwordController,
+                            validator: LoginUtils.validatePassword,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: () => handleLogin(),
+                          ),
                           const SizedBox(height: 12),
 
                           Row(
@@ -136,32 +124,23 @@ class LoginPage extends HookConsumerWidget {
                             children: [
                               Row(
                                 children: [
-                                  Checkbox(
-                                    value: rememberMe.value,
-                                    onChanged: (value) {
-                                      rememberMe.value = value ?? false;
-                                    },
-                                  ),
-                                  Text(
-                                    'Remember me',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade700,
-                                      fontSize: 14,
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: rememberMe.value,
+                                      onChanged: (v) => rememberMe.value = v ?? false,
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
+                                  Text('Remember me', style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
                                 ],
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  Beamer.of(context).beamToNamed('/otp');
-                                },
+                                onTap: () => Beamer.of(context).beamToNamed('/otp'),
                                 child: Text(
                                   'Forgot Password?',
-                                  style: TextStyle(
-                                    color: primaryGold,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style: TextStyle(color: primaryGold, fontSize: 14, fontWeight: FontWeight.w500),
                                 ),
                               ),
                             ],
@@ -169,64 +148,54 @@ class LoginPage extends HookConsumerWidget {
 
                           const SizedBox(height: 32),
 
-                          // ================= LOGIN BUTTON =================
                           AppPrimaryButton(
-                            text: loginState.isLoading
-                                ? 'Logging in...'
-                                : 'Log In',
+                            text: loginState.isLoading ? 'Logging in...' : 'Log In',
                             onPressed: loginState.isLoading ? null : handleLogin,
                           ),
 
                           const SizedBox(height: 16),
 
-                          // ================= GOOGLE BUTTON =================
                           AppGoogleButton(
-                            onPressed:
-                                loginState.isLoading ? null : () {},
+                            onPressed: loginState.isLoading ? null : () {},
                           ),
 
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 16),
+
+                          // Optimized Test Login (TextButton saves a lot of vertical space)
+                          TextButton(
+                            onPressed: () => Beamer.of(context).beamToReplacementNamed('/home'),
+                            child: Text(
+                              'Test Login (Skip Auth)',
+                              style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
 
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                "Don't have an account? ",
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontSize: 15,
-                                ),
-                              ),
+                              Text("Don't have an account? ", style: TextStyle(color: Colors.grey.shade700, fontSize: 15)),
                               GestureDetector(
-                                onTap: () => Beamer.of(context)
-                                    .beamToNamed('/signup'),
+                                onTap: () => Beamer.of(context).beamToNamed('/signup'),
                                 child: Text(
                                   'Sign Up',
-                                  style: TextStyle(
-                                    color: primaryGold,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
+                                  style: TextStyle(color: primaryGold, fontWeight: FontWeight.bold, fontSize: 15),
                                 ),
                               ),
                             ],
                           ),
-
-                          const SizedBox(height: 40),
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
-                    );
-
-                    return SingleChildScrollView(child: content);
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

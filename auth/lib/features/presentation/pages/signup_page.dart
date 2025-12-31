@@ -42,122 +42,99 @@ class SignUpPage extends HookConsumerWidget {
     final primaryGold = theme.colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: primaryGold,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ================= HEADER =================
-            AuthHeader(
-              title: 'Create your account',
-              subtitle: 'Sign up to start managing your store',
-              onBack: () => Beamer.of(context).beamBack(),
-            ),
+    backgroundColor: primaryGold,
+    resizeToAvoidBottomInset: true,
+    body: SafeArea(
+      child: Column(
+        children: [
+          // ================= HEADER (Fixed) =================
+          AuthHeader(
+            title: 'Create your account',
+            subtitle: 'Sign up to start managing your store',
+            onBack: () => Beamer.of(context).beamBack(),
+          ),
 
-            const SizedBox(height: 24),
+          const SizedBox(height: 24),
 
-            // ================= WHITE CARD =================
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(32),
-                  ),
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                    final needsScroll = keyboardHeight > 0;
-
-                    final content = Padding(
-                      padding: EdgeInsets.only(
-                        left: 24,
-                        right: 24,
-                        top: 32,
-                        bottom: keyboardHeight > 0 ? keyboardHeight + 24 : 24,
-                      ),
-                      child: AuthContainer(
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // Error message display
-                              if (errorMessage.value != null)
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.red.shade200),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          errorMessage.value!,
-                                          style: TextStyle(
-                                            color: Colors.red.shade700,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (errorMessage.value != null) const SizedBox(height: 16),
-                              
-                              AppTextField(
-                                label: 'Email',
-                                hintText: 'Enter your email',
-                                keyboardType: TextInputType.emailAddress,
-                                controller: emailController,
-                                validator: LoginUtils.validateEmail,
-                                textInputAction: TextInputAction.next,
+          // ================= WHITE CARD (Fills remaining space) =================
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                child: SingleChildScrollView(
+                  // Maintains consistent padding regardless of keyboard state
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: AuthContainer(
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Error message display
+                          if (errorMessage.value != null) ...[
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.red.shade200),
                               ),
-                              const SizedBox(height: 20),
-                              AppTextField(
-                                label: 'Password',
-                                hintText: 'Enter your password',
-                                isPassword: true,
-                                controller: passwordController,
-                                validator: LoginUtils.validatePassword,
-                                textInputAction: TextInputAction.done,
-                                onFieldSubmitted: handleSignup,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      errorMessage.value!,
+                                      style: TextStyle(color: Colors.red.shade700, fontSize: 14),
+                                    ),
+                                  ),
+                                ],
                               ),
-                          const SizedBox(height: 16),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          AppTextField(
+                            label: 'Email',
+                            hintText: 'Enter your email',
+                            keyboardType: TextInputType.emailAddress,
+                            controller: emailController,
+                            validator: LoginUtils.validateEmail,
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 20),
+                          AppTextField(
+                            label: 'Password',
+                            hintText: 'Enter your password',
+                            isPassword: true,
+                            controller: passwordController,
+                            validator: LoginUtils.validatePassword,
+                            textInputAction: TextInputAction.done,
+                            // Fixed: Using (_) to ignore the submitted string
+                            onFieldSubmitted: () => handleSignup(),
+                          ),
+                          const SizedBox(height: 24),
 
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              style: TextStyle(
-                                color: Colors.grey.shade700,
-                                fontSize: 14,
-                              ),
+                              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
                               children: [
-                                const TextSpan(
-                                  text: 'By signing up you agree to our ',
-                                ),
+                                const TextSpan(text: 'By signing up you agree to our '),
                                 TextSpan(
                                   text: 'Terms of Service',
-                                  style: TextStyle(
-                                    color: primaryGold,
-                                    fontWeight: FontWeight.w500,
-                                    decoration: TextDecoration.underline,
-                                  ),
+                                  style: TextStyle(color: primaryGold, fontWeight: FontWeight.w600),
                                 ),
                                 const TextSpan(text: ' and '),
                                 TextSpan(
                                   text: 'Privacy Policy',
-                                  style: TextStyle(
-                                    color: primaryGold,
-                                    fontWeight: FontWeight.w500,
-                                    decoration: TextDecoration.underline,
-                                  ),
+                                  style: TextStyle(color: primaryGold, fontWeight: FontWeight.w600),
                                 ),
                               ],
                             ),
@@ -166,34 +143,27 @@ class SignUpPage extends HookConsumerWidget {
                           const SizedBox(height: 32),
 
                           AppPrimaryButton(
-                            text: signupState.isLoading
-                                ? 'Signing up...'
-                                : 'Sign Up',
+                            text: signupState.isLoading ? 'Signing up...' : 'Sign Up',
                             onPressed: signupState.isLoading ? null : handleSignup,
                           ),
 
                           const SizedBox(height: 16),
 
                           AppGoogleButton(
-                            onPressed:
-                                signupState.isLoading ? null : () {},
+                            onPressed: signupState.isLoading ? null : () {},
                           ),
 
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 32),
 
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 "Already have an account? ",
-                                style: TextStyle(
-                                  color: Colors.grey.shade700,
-                                  fontSize: 15,
-                                ),
+                                style: TextStyle(color: Colors.grey.shade700, fontSize: 15),
                               ),
                               GestureDetector(
-                                onTap: () =>
-                                    Beamer.of(context).beamBack(),
+                                onTap: () => Beamer.of(context).beamBack(),
                                 child: Text(
                                   'Login',
                                   style: TextStyle(
@@ -205,22 +175,19 @@ class SignUpPage extends HookConsumerWidget {
                               ),
                             ],
                           ),
-
-                          const SizedBox(height: 40),
-                            ],
-                          ),
-                        ),
+                          // Added bottom padding to ensure the last link isn't cut off
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                    );
-
-                    return SingleChildScrollView(child: content);
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
