@@ -4,12 +4,14 @@ class AppPrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading; 
+  final double fontSize;
 
   const AppPrimaryButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.fontSize = 16,
   });
 
   @override
@@ -38,7 +40,6 @@ class AppPrimaryButton extends StatelessWidget {
           : Text(
               text,
               style: const TextStyle(
-                fontSize: 18,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Libadora',
                 color: Colors.white,
