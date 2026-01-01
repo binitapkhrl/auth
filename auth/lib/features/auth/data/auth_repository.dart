@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AuthRepository {
+  bool _isLoggedIn = false;
   Future<bool> signIn(String email, String password) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 2));
@@ -25,6 +26,12 @@ class AuthRepository {
     // Dummy success response for signup
     return true;
   }
+  Future<void> logout() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    _isLoggedIn = false;
+  }
+
+  bool get isLoggedIn => _isLoggedIn;
 
   Future<void> resendOtp() async {
     await Future.delayed(const Duration(seconds: 1));
