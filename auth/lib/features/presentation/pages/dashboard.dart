@@ -42,7 +42,7 @@ class DashboardScreen extends ConsumerWidget {
               height: 36,
               child: AppPrimaryButton(
                 text: "Visit Store",
-                fontSize: 12,
+                fontSize: 14,
                 onPressed: () {},
               ),
             ),

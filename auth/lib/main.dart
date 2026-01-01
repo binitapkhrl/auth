@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:beamer/beamer.dart';
 import 'core/routing/app_router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(
@@ -24,13 +25,7 @@ class MyApp extends ConsumerWidget {
       routerDelegate: AppRouter.routerDelegate,
 
       /// Theme Setup
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFF7518),
-          primary: const Color(0xFFFF7518),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
     );
   }
 }

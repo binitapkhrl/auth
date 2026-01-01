@@ -28,11 +28,12 @@ class PromoCard extends StatelessWidget {
             Positioned.fill(
               child: Container(
                 color: theme.colorScheme.primary.withAlpha(26),
-                child: Image.asset(
-                  'assets/logo/pos_new.png',
-                  fit: BoxFit.cover,
-                  color: Colors.black.withAlpha(50),
-                  colorBlendMode: BlendMode.darken,
+                child: Opacity(
+                  opacity: 0.50,
+                  child: Image.asset(
+                    'assets/logo/pos_new.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:beamer/beamer.dart';
 import 'package:auth/features/auth/providers/auth_state_provider.dart';
-import 'package:auth/core/routing/routes.dart';
 
 class MenuPage extends ConsumerWidget {
   const MenuPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Menu'),
+        // automaticallyImplyLeading: false,
+        leading: IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {
+      // Navigate back to dashboard explicitly
+      Beamer.of(context).beamToReplacementNamed('/home');
+    },
+  ),
         centerTitle: true,
       ),
       body: ListView(
@@ -36,7 +44,7 @@ class MenuPage extends ConsumerWidget {
           _MenuTile(
             icon: Icons.logout,
             title: 'Logout',
-            color: Colors.redAccent,
+            color: theme.colorScheme.primary,
             onTap: () => _confirmLogout(context, ref),
           ),
         ],
@@ -45,33 +53,59 @@ class MenuPage extends ConsumerWidget {
   }
 
   void _confirmLogout(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
+     final theme = Theme.of(context);
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: Colors.white,
+      title: const Text('Logout'),
+      content: const Text('Are you sure you want to logout?'),
+      actions: [
+        Expanded(
+          child: OutlinedButton(
             onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black87,
+              side: BorderSide(color: Colors.grey.shade300),
+              minimumSize: const Size(0, 44),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             child: const Text('Cancel'),
           ),
-          ElevatedButton(
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
+              backgroundColor: Colors.white,
+              foregroundColor: theme.colorScheme.primary,
+              side: BorderSide(color: theme.colorScheme.primary),
+              minimumSize: const Size(0, 44),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () async {
               Navigator.pop(context);
 
+              // Perform logout
               await ref.read(authStateProvider.notifier).logout();
 
-              Beamer.of(context).beamToReplacementNamed(AppRoutes.login);
+              // Navigate to login and clear back stack
+              Beamer.of(context).beamToReplacementNamed('/');
             },
             child: const Text('Logout'),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
 }
 
 class _MenuTile extends StatelessWidget {

@@ -21,9 +21,41 @@ class LoginPage extends HookConsumerWidget {
 
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
+    final scrollController = useScrollController();
+    final emailFocus = useFocusNode();
+    final passwordFocus = useFocusNode();
+
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final rememberMe = useState(false);
     final errorMessage = useState<String?>(null);
+
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final isKeyboardVisible = keyboardHeight > 0;
+
+    // Optimized Restoration Logic
+    useEffect(() {
+      if (isKeyboardVisible) {
+        // Use a slight delay to ensure the keyboard is fully deployed
+        Future.delayed(const Duration(milliseconds: 50), () {
+          if (scrollController.hasClients) {
+            scrollController.animateTo(
+              120, // Adjust this to hide your specific header height
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+            );
+          }
+        });
+      } else {
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInCubic,
+          );
+        }
+      }
+      return null;
+    }, [isKeyboardVisible]);
 
     void handleLogin() {
       final isValid = formKey.currentState?.validate() ?? false;
@@ -31,84 +63,69 @@ class LoginPage extends HookConsumerWidget {
 
       errorMessage.value = null;
       ref.read(loginProvider.notifier).login(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-        onSuccess: () {
-          Beamer.of(context).beamToReplacementNamed('/home');
-        },
-        onError: (error) {
-          errorMessage.value = error;
-        },
-      );
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+            onSuccess: () => Beamer.of(context).beamToReplacementNamed('/home'),
+            onError: (error) => errorMessage.value = error,
+          );
     }
-  return Scaffold(
-    backgroundColor: primaryGold,
-    resizeToAvoidBottomInset: true, // Let Scaffold handle the keyboard lift
-    body: SafeArea(
-      child: Column(
-        children: [
-          // ================= HEADER (Stable at top) =================
-          AuthHeader(
-            title: 'Login Saauzi',
-            subtitle: 'Please sign in to continue to your account',
-          ),
 
-          const SizedBox(height: 24),
-
-          // ================= WHITE CARD (Flexible) =================
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+    return GestureDetector(
+      // Optimization: Dismiss keyboard when tapping background
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: primaryGold,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+            physics: isKeyboardVisible 
+                ? const BouncingScrollPhysics() 
+                : const NeverScrollableScrollPhysics(),
+            slivers: [
+              const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    AuthHeader(
+                      title: 'Login Saauzi',
+                      subtitle: 'Please sign in to continue to your account',
+                    ),
+                    SizedBox(height: 24),
+                  ],
+                ),
               ),
-              // ClipRRect ensures the scrollable content doesn't overlap the rounded corners
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 24),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                  ),
+                  padding: EdgeInsets.only(
+                    bottom: isKeyboardVisible ? keyboardHeight + 16 : 32,
+                  ),
                   child: AuthContainer(
                     child: Form(
                       key: formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Error message display
                           if (errorMessage.value != null) ...[
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.red.shade200),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      errorMessage.value!,
-                                      style: TextStyle(color: Colors.red.shade700, fontSize: 14),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            _buildErrorBox(errorMessage.value!),
                             const SizedBox(height: 16),
                           ],
-
                           AppTextField(
+                            focusNode: emailFocus,
                             label: 'Email',
                             hintText: 'example@gmail.com',
-                            keyboardType: TextInputType.emailAddress,
                             controller: emailController,
                             validator: LoginUtils.validateEmail,
                             textInputAction: TextInputAction.next,
                           ),
                           const SizedBox(height: 20),
                           AppTextField(
+                            focusNode: passwordFocus,
                             label: 'Password',
                             hintText: 'Enter your password',
                             isPassword: true,
@@ -118,50 +135,17 @@ class LoginPage extends HookConsumerWidget {
                             onFieldSubmitted: () => handleLogin(),
                           ),
                           const SizedBox(height: 12),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: rememberMe.value,
-                                      onChanged: (v) => rememberMe.value = v ?? false,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text('Remember me', style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () => Beamer.of(context).beamToNamed('/otp'),
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(color: primaryGold, fontSize: 14, fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                            ],
-                          ),
-
+                          _buildOptionsRow(context, rememberMe, primaryGold),
                           const SizedBox(height: 32),
-
                           AppPrimaryButton(
                             text: loginState.isLoading ? 'Logging in...' : 'Log In',
                             onPressed: loginState.isLoading ? null : handleLogin,
                           ),
-
                           const SizedBox(height: 16),
-
                           AppGoogleButton(
                             onPressed: loginState.isLoading ? null : () {},
                           ),
-
                           const SizedBox(height: 16),
-
-                          // Optimized Test Login (TextButton saves a lot of vertical space)
                           TextButton(
                             onPressed: () => Beamer.of(context).beamToReplacementNamed('/home'),
                             child: Text(
@@ -169,33 +153,62 @@ class LoginPage extends HookConsumerWidget {
                               style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
                             ),
                           ),
-
                           const SizedBox(height: 24),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Don't have an account? ", style: TextStyle(color: Colors.grey.shade700, fontSize: 15)),
-                              GestureDetector(
-                                onTap: () => Beamer.of(context).beamToNamed('/signup'),
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(color: primaryGold, fontWeight: FontWeight.bold, fontSize: 15),
-                                ),
-                              ),
-                            ],
-                          ),
+                          _buildFooter(context, primaryGold),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
+    );
+  }
+   Widget _buildErrorBox(String msg) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red.shade200)),
+    child: Row(children: [
+      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+      const SizedBox(width: 8),
+      Expanded(child: Text(msg, style: TextStyle(color: Colors.red.shade700, fontSize: 14))),
+    ]),
   );
-}
+
+  Widget _buildOptionsRow(BuildContext context, ValueNotifier<bool> rem, Color gold) => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Row(children: [
+        SizedBox(
+          height: 24, width: 24,
+          child: Checkbox(value: rem.value, onChanged: (v) => rem.value = v ?? false),
+        ),
+        const SizedBox(width: 8),
+        Text('Remember me', style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
+      ]),
+      GestureDetector(
+        onTap: () => Beamer.of(context).beamToNamed('/otp'),
+        child: Text('Forgot Password?', style: TextStyle(color: gold, fontSize: 14, fontWeight: FontWeight.w500)),
+      ),
+    ],
+  );
+
+  Widget _buildFooter(BuildContext context, Color gold) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text("Don't have an account? ", style: TextStyle(color: Colors.grey.shade700, fontSize: 15)),
+      GestureDetector(
+        onTap: () => Beamer.of(context).beamToNamed('/signup'),
+        child: Text('Sign Up', style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 15)),
+      ),
+    ],
+  );
+
+  // Helper widgets omitted for brevity, same as previous...
+  // (Keep your _buildErrorBox, _buildOptionsRow, and _buildFooter helpers here)
 }

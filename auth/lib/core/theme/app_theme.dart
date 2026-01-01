@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // Your Brand Colors
   static const Color primaryGold = Color(0xFFE67E22);
-  static const Color surfaceWhite = Color(0xFFF8F8F8);
+  static const Color surfaceWhite = Colors.white;
   static const Color errorRed = Color(0xFFBA1A1A);
+  static const Color backgroundColor = Colors.white;
 
   static ThemeData get lightTheme {
     // Shared border radius and base border for consistency
@@ -79,6 +80,9 @@ class AppTheme {
           ),
         ),
       ),
+
+      // Scaffold Background
+      scaffoldBackgroundColor: backgroundColor,
     );
   }
 }

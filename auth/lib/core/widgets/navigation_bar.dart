@@ -9,9 +9,8 @@ class CustomBottomNavBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(navIndexProvider);
-    final primary = Theme.of(context).colorScheme.primary;
 
-    void _onTap(int index) {
+    void onTap(int index) {
       ref.read(navIndexProvider.notifier).state = index;
 
       switch (index) {
@@ -19,10 +18,10 @@ class CustomBottomNavBar extends HookConsumerWidget {
           Beamer.of(context).beamToNamed('/home');
           break;
         case 1:
-          Beamer.of(context).beamToNamed('/orders');
+          // Beamer.of(context).beamToNamed('/orders');
           break;
         case 2:
-          Beamer.of(context).beamToNamed('/account'); // change to your route
+          // Beamer.of(context).beamToNamed('/account'); // change to your route
           break;
         case 3:
           Beamer.of(context).beamToNamed('/menu');
@@ -49,25 +48,25 @@ class CustomBottomNavBar extends HookConsumerWidget {
             icon: Icons.home_outlined,
             label: "Home",
             isActive: selectedIndex == 0,
-            onTap: () => _onTap(0),
+            onTap: () => onTap(0),
           ),
           _NavBarItem(
             icon: Icons.storefront_outlined,
             label: "Products",
             isActive: selectedIndex == 1,
-            onTap: () => _onTap(1),
+            onTap: () => onTap(1),
           ),
           _NavBarItem(
             icon: Icons.person_outline,
             label: "Account",
             isActive: selectedIndex == 2,
-            onTap: () => _onTap(2),
+            onTap: () => onTap(2),
           ),
           _NavBarItem(
             icon: Icons.menu,
             label: "Menu",
             isActive: selectedIndex == 3,
-            onTap: () => _onTap(3),
+            onTap: () => onTap(3),
           ),
         ],
       ),

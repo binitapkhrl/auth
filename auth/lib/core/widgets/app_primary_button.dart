@@ -39,7 +39,8 @@ class AppPrimaryButton extends StatelessWidget {
             )
           : Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
+                fontSize: fontSize,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Libadora',
                 color: Colors.white,
