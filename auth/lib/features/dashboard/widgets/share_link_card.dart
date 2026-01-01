@@ -56,45 +56,41 @@ class ShareLinkCard extends StatelessWidget {
           Divider(color: Colors.grey.shade300, height: 1),
           const SizedBox(height: 16),
 
-          Row(
-            children: [
-              const Text(
-                "Share on ",
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              const SizedBox(width: 16),
-
-              SocialIcon(
-                icon: Icons.facebook,
-                color: const Color(0xFF1877F2),
-                onTap: () =>
-                    ShareService.shareToFacebook(storeLink),
-              ),
-              const SizedBox(width: 16),
-
-              SocialIcon(
-                icon: Icons.camera_alt_outlined,
-                color: const Color(0xFFE4405F),
-                onTap: () =>
-                    ShareService.shareToInstagram(context, storeLink),
-              ),
-              const SizedBox(width: 16),
-
-              SocialIcon(
-                icon: Icons.alternate_email,
-                color: Colors.black87,
-                onTap: () =>
-                    ShareService.shareToTwitter(storeLink),
-              ),
-              const SizedBox(width: 16),
-
-              SocialIcon(
-                icon: Icons.email_outlined,
-                color: Colors.grey.shade700,
-                onTap: () =>
-                    ShareService.shareViaEmail(storeLink),
-              ),
-            ],
+          /// Social Icons - horizontally scrollable
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                const Text(
+                  "Share on ",
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+                const SizedBox(width: 16),
+                SocialIcon(
+                  icon: Icons.facebook,
+                  color: const Color(0xFF1877F2),
+                  onTap: () => ShareService.shareToFacebook(storeLink),
+                ),
+                const SizedBox(width: 16),
+                SocialIcon(
+                  icon: Icons.camera_alt_outlined,
+                  color: const Color(0xFFE4405F),
+                  onTap: () => ShareService.shareToInstagram(context, storeLink),
+                ),
+                const SizedBox(width: 16),
+                SocialIcon(
+                  icon: Icons.alternate_email,
+                  color: Colors.black87,
+                  onTap: () => ShareService.shareToTwitter(storeLink),
+                ),
+                const SizedBox(width: 16),
+                SocialIcon(
+                  icon: Icons.email_outlined,
+                  color: Colors.grey.shade700,
+                  onTap: () => ShareService.shareViaEmail(storeLink),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auth/features/auth/providers/navigation_provider.dart';
+import 'package:beamer/beamer.dart';
 
 class CustomBottomNavBar extends HookConsumerWidget {
   const CustomBottomNavBar({super.key});
@@ -9,14 +9,31 @@ class CustomBottomNavBar extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(navIndexProvider);
-    // final primary = Theme.of(context).colorScheme.primary;
+    final primary = Theme.of(context).colorScheme.primary;
+
+    void _onTap(int index) {
+      ref.read(navIndexProvider.notifier).state = index;
+
+      switch (index) {
+        case 0:
+          Beamer.of(context).beamToNamed('/home');
+          break;
+        case 1:
+          Beamer.of(context).beamToNamed('/orders');
+          break;
+        case 2:
+          Beamer.of(context).beamToNamed('/account'); // change to your route
+          break;
+        case 3:
+          Beamer.of(context).beamToNamed('/menu');
+          break;
+      }
+    }
 
     return Container(
-      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(25),
@@ -26,31 +43,31 @@ class CustomBottomNavBar extends HookConsumerWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Equal spacing
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _NavBarItem(
             icon: Icons.home_outlined,
             label: "Home",
             isActive: selectedIndex == 0,
-            onTap: () => ref.read(navIndexProvider.notifier).state = 0,
+            onTap: () => _onTap(0),
           ),
           _NavBarItem(
             icon: Icons.storefront_outlined,
             label: "Products",
             isActive: selectedIndex == 1,
-            onTap: () => ref.read(navIndexProvider.notifier).state = 1,
+            onTap: () => _onTap(1),
           ),
           _NavBarItem(
             icon: Icons.person_outline,
             label: "Account",
             isActive: selectedIndex == 2,
-            onTap: () => ref.read(navIndexProvider.notifier).state = 2,
+            onTap: () => _onTap(2),
           ),
           _NavBarItem(
             icon: Icons.menu,
             label: "Menu",
             isActive: selectedIndex == 3,
-            onTap: () => ref.read(navIndexProvider.notifier).state = 3,
+            onTap: () => _onTap(3),
           ),
         ],
       ),
@@ -75,10 +92,10 @@ class _NavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
 
-    return Expanded( // Makes each item take equal width
+    return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        behavior: HitTestBehavior.opaque, // Better tap area
+        behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           padding: const EdgeInsets.symmetric(vertical: 8),

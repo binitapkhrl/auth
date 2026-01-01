@@ -11,28 +11,29 @@ return Column(
   crossAxisAlignment: CrossAxisAlignment.start,
   children: [
     Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          "Performance Summary",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Expanded(
+      child: Text(
+        "Performance Summary",
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
         ),
-        TextButton.icon(
-          onPressed: () {
-            
-          },
-          icon: const Icon(Icons.tune, size: 18),
-          label: const Text("Apply Filter"),
-          style: TextButton.styleFrom(
-            foregroundColor: theme.colorScheme.primary,
-          ),
-        ),
-      ],
+      ),
     ),
+    TextButton.icon(
+      onPressed: () {},
+      icon: const Icon(Icons.tune, size: 18),
+      label: const Text("Apply Filter"),
+      style: TextButton.styleFrom(
+        foregroundColor: theme.colorScheme.primary,
+      ),
+    ),
+  ],
+),
+
     const SizedBox(height: 16),
 
     // First Row: Larger, prominent stats

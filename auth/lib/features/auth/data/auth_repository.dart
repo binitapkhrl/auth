@@ -26,8 +26,10 @@ class AuthRepository {
     // Dummy success response for signup
     return true;
   }
-  Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+ 
+  Future<void> signOut() async {
+    // Clear session, tokens, etc.
+    await Future.delayed(const Duration(milliseconds: 500));
     _isLoggedIn = false;
   }
 
