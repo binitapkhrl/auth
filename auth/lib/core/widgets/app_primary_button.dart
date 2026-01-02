@@ -5,6 +5,9 @@ class AppPrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading; 
   final double fontSize;
+  final IconData? icon;
+  final FontWeight? fontWeight;
+
 
   const AppPrimaryButton({
     super.key,
@@ -12,6 +15,9 @@ class AppPrimaryButton extends StatelessWidget {
     required this.onPressed,
     this.isLoading = false,
     this.fontSize = 16,
+    this.icon,
+    this.fontWeight = FontWeight.w600,
+    
   });
 
   @override
@@ -37,14 +43,23 @@ class AppPrimaryButton extends StatelessWidget {
                 valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             )
-          : Text(
-              text,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Libadora',
-                color: Colors.white,
-              ),
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Libadora',
+                    color: Colors.white,
+                  ),
+                ),
+                if (icon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(icon, color: Colors.white, size: 20),
+                ],
+              ],
             ),
     );
   }

@@ -7,7 +7,7 @@ class PerformanceSummary extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedFilter = useState('This Week');
+    final selectedFilter = useState('Today');
     final theme = Theme.of(context);
 
 return Column(
@@ -68,7 +68,7 @@ return Column(
           child: StatBox(
             icon: Icons.shopping_bag_outlined,
             value: "1.3k",
-            color: theme.colorScheme.primary,
+            color: Colors.blue,
             label: "Total Orders",
             height: 170,
           ),
@@ -78,6 +78,7 @@ return Column(
           child: StatBox(
             icon: Icons.inventory_2_outlined,
             value: "248",
+            color: Colors.blue,
             label: "Total Products",
             height: 170,
           ),
@@ -87,6 +88,7 @@ return Column(
           child: StatBox(
             icon: Icons.star_outline,
             value: "56",
+            color: Colors.blue,
             label: "Featured Products",
             height: 170,
           ),
@@ -106,10 +108,11 @@ return Column(
         const SizedBox(height: 24),
     // Second Row: Smaller secondary stats
     Row(
-      children: const [
+      children:  [
         Expanded(
           child: StatBox(
             icon: Icons.check_circle_outline,
+            color: theme.colorScheme.primary,
             value: "1.1k",
             label: "Total Orders",
             height: 150,
@@ -119,6 +122,7 @@ return Column(
         Expanded(
           child: StatBox(
             icon: Icons.local_shipping_outlined,
+            color: theme.colorScheme.primary,
             value: "892",
             label: "Shipped Orders",
             height: 150,
@@ -128,6 +132,7 @@ return Column(
         Expanded(
           child: StatBox(
             icon: Icons.pending_outlined,
+            color: theme.colorScheme.primary,
             value: "408",
             label: "Pending Orders",
             height: 150,

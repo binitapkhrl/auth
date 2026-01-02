@@ -13,6 +13,7 @@ class DashboardAppBar extends StatelessWidget
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 1,
+      shadowColor: Colors.grey.shade200,
       automaticallyImplyLeading: false,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
 

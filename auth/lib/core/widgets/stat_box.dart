@@ -30,7 +30,7 @@ class StatBox extends StatelessWidget {
           Icon(
             icon,
             size: 32,
-            color: Colors.blue,
+            color: color,
           ),
           const SizedBox(height: 12),
           Text(

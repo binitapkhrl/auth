@@ -39,11 +39,13 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
             SizedBox(
-              width: 120,
+              width: 150,
               height: 36,
               child: AppPrimaryButton(
                 text: "Visit Store",
+                icon: Icons.open_in_new,
                 fontSize: 14,
+                fontWeight: FontWeight.w400,
                 onPressed: () async {
                   final theme = Theme.of(context);
                   final confirmed = await showDialog<bool>(
