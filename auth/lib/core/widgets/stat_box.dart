@@ -4,6 +4,7 @@ class StatBox extends StatelessWidget {
   final String value;
   final String label;
   final double height;
+  final Color? color;
 
   const StatBox({
     super.key,
@@ -11,6 +12,7 @@ class StatBox extends StatelessWidget {
     required this.value,
     required this.label,
     this.height = 120,
+    this.color=theme.colorScheme.primary,
   });
 
   @override
@@ -28,7 +30,7 @@ class StatBox extends StatelessWidget {
           Icon(
             icon,
             size: 32,
-            color: Theme.of(context).colorScheme.primary.withAlpha(204),
+            color: Colors.blue,
           ),
           const SizedBox(height: 12),
           Text(

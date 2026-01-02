@@ -7,8 +7,8 @@ class PerformanceSummary extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final selectedFilter = useState('This Week');
+    final theme = Theme.of(context);
 
 return Column(
   crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,16 +63,17 @@ return Column(
     // First Row: Larger, prominent stats
     Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
+      children: [
         Expanded(
           child: StatBox(
             icon: Icons.shopping_bag_outlined,
             value: "1.3k",
+            color: theme.colorScheme.primary,
             label: "Total Orders",
             height: 170,
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: StatBox(
             icon: Icons.inventory_2_outlined,
@@ -81,7 +82,7 @@ return Column(
             height: 170,
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: StatBox(
             icon: Icons.star_outline,
