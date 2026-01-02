@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:auth/core/services/share_service.dart';
 import 'package:auth/core/widgets/social_icon.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ShareLinkCard extends StatelessWidget {
   final String storeLink;
@@ -33,7 +35,7 @@ class ShareLinkCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Share store link",
+            "Share Store Link",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -42,13 +44,32 @@ class ShareLinkCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          /// Store URL
-          SelectableText(
-            storeLink,
-            style: TextStyle(
-              fontSize: 16,
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w500,
+          /// Store URL with tap to copy
+          GestureDetector(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: storeLink));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Link copied to clipboard!'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Text(
+                storeLink,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
 
@@ -67,26 +88,26 @@ class ShareLinkCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 SocialIcon(
-                  icon: Icons.facebook,
-                  color: const Color(0xFF1877F2),
+                  icon: FontAwesomeIcons.facebookF,
+                  color:  theme.colorScheme.primary,
                   onTap: () => ShareService.shareToFacebook(storeLink),
                 ),
                 const SizedBox(width: 16),
                 SocialIcon(
                   icon: Icons.camera_alt_outlined,
-                  color: const Color(0xFFE4405F),
+                  color:  theme.colorScheme.primary,
                   onTap: () => ShareService.shareToInstagram(context, storeLink),
                 ),
                 const SizedBox(width: 16),
                 SocialIcon(
-                  icon: Icons.alternate_email,
-                  color: Colors.black87,
+                  icon: FontAwesomeIcons.xTwitter,
+                  color: theme.colorScheme.primary,
                   onTap: () => ShareService.shareToTwitter(storeLink),
                 ),
                 const SizedBox(width: 16),
                 SocialIcon(
                   icon: Icons.email_outlined,
-                  color: Colors.grey.shade700,
+                  color:  theme.colorScheme.primary,
                   onTap: () => ShareService.shareViaEmail(storeLink),
                 ),
               ],

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:auth/core/widgets/app_primary_button.dart';
 import 'package:auth/core/widgets/navigation_bar.dart';
-import 'package:auth/core/widgets/revenue_chart.dart';
+import 'package:auth/features/dashboard/widgets/revenue_chart.dart';
 import 'package:auth/features/dashboard/widgets/dashboard_appbar.dart';
 import 'package:auth/features/dashboard/widgets/promo_card.dart';
 import 'package:auth/features/dashboard/widgets/share_link_card.dart';
@@ -43,7 +44,67 @@ class DashboardScreen extends ConsumerWidget {
               child: AppPrimaryButton(
                 text: "Visit Store",
                 fontSize: 14,
-                onPressed: () {},
+                onPressed: () async {
+                  final theme = Theme.of(context);
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      backgroundColor: Colors.white,
+                      title: const Text('Leaving App'),
+                      content: const Text('You are leaving our app. Are you sure?'),
+                      actions: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black87,
+                              side: BorderSide(color: Colors.grey.shade300),
+                              minimumSize: const Size(0, 44),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: theme.colorScheme.primary,
+                              side: BorderSide(color: theme.colorScheme.primary),
+                              minimumSize: const Size(0, 44),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Continue'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true) {
+  final url = Uri.parse(
+    "https://youtu.be/Txn5-dKLFHg?si=n945OH4FgALdz-Uq",
+  );
+
+  final success = await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  );
+
+  if (!success) {
+    debugPrint('Failed to launch $url');
+  }
+}
+
+                },
               ),
             ),
           ],
@@ -56,7 +117,7 @@ class DashboardScreen extends ConsumerWidget {
 
         /// Share link card
         const ShareLinkCard(
-          storeLink: "https://saauzi.com/your-store-link",
+          storeLink: "https://youtu.be/Txn5-dKLFHg?si=n945OH4FgALdz-Uq",
         ),
         const SizedBox(height: 32),
         /// Performance summary

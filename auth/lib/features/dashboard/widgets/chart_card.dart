@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:auth/core/widgets/sales_line_chart.dart';
+import 'package:auth/features/dashboard/widgets/sales_line_chart.dart';
 
 class ChartCard extends StatelessWidget {
   const ChartCard({super.key});
@@ -24,7 +24,7 @@ return Container(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text(
-                "Weekly order count",
+                " Revenue Chart",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

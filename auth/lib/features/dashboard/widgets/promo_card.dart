@@ -29,9 +29,9 @@ class PromoCard extends StatelessWidget {
               child: Container(
                 color: theme.colorScheme.primary.withAlpha(26),
                 child: Opacity(
-                  opacity: 0.50,
+                  opacity: 0.10,
                   child: Image.asset(
-                    'assets/logo/pos_new.png',
+                    'assets/logo/figma_pos.png',
                     fit: BoxFit.cover,
                   ),
                 ),
