@@ -12,7 +12,7 @@ class StatBox extends StatelessWidget {
     required this.value,
     required this.label,
     this.height = 120,
-    this.color=theme.colorScheme.primary,
+    this.color=Colors.blue,
   });
 
   @override
